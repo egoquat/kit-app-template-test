@@ -18,13 +18,51 @@ import random
 
 from omni.kit.menu.utils import MenuItemDescription
 
-# Functions and vars are available to other extensions as usual in python:
-# `test01.editor.random_prim_ui.some_public_function(x)`
-def some_public_function(x: int):
-    """This is a public function that can be called from other extensions."""
-    print(f"[test01.editor.random_prim_ui] some_public_function was called with {x}")
-    return x ** x
+def scatter_cones(quantity: int):
+    usd_context = omni.usd.get_context()
+    stage = usd_context.get_stage()
 
+    for _ in range(quantity):
+        prim_path = omni.usd.get_stage_next_free_path(
+            stage,
+            str(stage.GetPseudoRoot().GetPath().AppendPath("Cone")),
+            False
+        )
+
+        omni.kit.commands.execute(
+            "CreatePrimCommand",
+            prim_path=prim_path,
+            prim_type="Cone",
+            attributes={"radius": 50, "height": 100},
+            select_new_prim=True,
+        )
+
+        bound = 500
+        rand_x = random.uniform(-bound, bound)
+        rand_z = random.uniform(-bound, bound)
+
+        translation = (rand_x, 0, rand_z)
+        omni.kit.commands.execute(
+            "TransformPrimSRT",
+            path=prim_path,
+            new_translation=translation,
+        )
+
+def clear_cones():
+    usd_context = omni.usd.get_context()
+    stage = usd_context.get_stage()
+
+    # Empty list to hold paths of matching primitives
+    matched_cones = []
+
+    # Iterate over all prims in the stage
+    for prim in stage.TraverseAll():
+        # Check if the prim's name starts with the pattern
+        if prim.GetName().startswith("Cone"):
+            matched_cones.append(prim.GetPath())
+
+    # Delete all the Cone prims
+    omni.kit.commands.execute("DeletePrims", paths=matched_cones)
 
 # Any class derived from `omni.ext.IExt` in the top level module (defined in
 # `python.modules` of `extension.toml`) will be instantiated when the extension
@@ -97,59 +135,11 @@ class MyExtension(omni.ext.IExt):
         self._count = 0
         self.create_window();
 
-
-
-    def scatter_cones(quantity: int):
-        usd_context = omni.usd.get_context()
-        stage = usd_context.get_stage()
-
-        for _ in range(quantity):
-            prim_path = omni.usd.get_stage_next_free_path(
-                stage,
-                str(stage.GetPseudoRoot().GetPath().AppendPath("Cone")),
-                False
-            )
-
-            omni.kit.commands.execute(
-                "CreatePrimCommand",
-                prim_path=prim_path,
-                prim_type="Cone",
-                attributes={"radius": 50, "height": 100},
-                select_new_prim=True,
-            )
-
-            bound = 500
-            rand_x = random.uniform(-bound, bound)
-            rand_z = random.uniform(-bound, bound)
-
-            translation = (rand_x, 0, rand_z)
-            omni.kit.commands.execute(
-                "TransformPrimSRT",
-                path=prim_path,
-                new_translation=translation,
-            )
-
     def on_click():
         step = self._step_size_model.as_int
         self._count += step
         label.text = f"count: {self._count}"
         scatter_cones(step)
-
-    def clear_cones():
-        usd_context = omni.usd.get_context()
-        stage = usd_context.get_stage()
-
-        # Empty list to hold paths of matching primitives
-        matched_cones = []
-
-        # Iterate over all prims in the stage
-        for prim in stage.TraverseAll():
-            # Check if the prim's name starts with the pattern
-            if prim.GetName().startswith("Cone"):
-                matched_cones.append(prim.GetPath())
-
-        # Delete all the Cone prims
-        omni.kit.commands.execute("DeletePrims", paths=matched_cones)
 
     def on_reset():
         self._count = 0
