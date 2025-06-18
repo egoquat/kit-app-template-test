@@ -25,3 +25,13 @@
 # subprocess_path = ["${root}/_build/host-deps/msvc/MSBuild/Current/Bin", "${root}/_build/host-deps/msvc/VC/Tools/MSVC/14.29.30133/bin/HostX64/x64", "${root}/_build/host-deps/msvc/VC/Auxiliary/Build", "${root}/_build/host-deps/winsdk/bin/x64"]
 # msvc_path = "${root}/_build/host-deps/msvc/VC/Tools/MSVC/14.29.30133"
 # win_sdk_path = "${root}/_build/host-deps/winsdk"
+
+[[dependency]]
+python = "../../_build/target-deps/python"
+packages = [
+   "openpyxl==3.1.5",
+   "requests==2.32.3",
+]
+target = "../../_build/target-deps/pip_prebundle"
+
+
