@@ -130,6 +130,17 @@ variables.extension_name = "my_company.my_python_ui_extension"
 variables.extension_display_name = "My Python UI Extension"
 variables.version = "0.1.0"
 
+
+[templates."warp_kernel_ui"]
+class = "ExtensionTemplate"
+name = "Warp Kernel UI"
+url = "."
+subpath = "extensions/warp_kernel_ui/template"
+variables.extension_name = "my_company.warp_kernel_ui"
+variables.extension_display_name = "Warp Kernel UI"
+variables.version = "0.1.0"
+
+
 [templates."basic_cpp_extension"]
 class = "ExtensionTemplate"
 name = "Basic C++ Extension"

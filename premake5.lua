@@ -18,3 +18,4 @@ repo_build.prebuild_copy {
 
 define_app("test01.editor.kit")
 define_app("test01.editor.pip.kit")
+define_app("test01.warpui_editor.kit")
